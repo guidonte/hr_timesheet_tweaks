@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+
+    <data noupdate="0">
+
+        <menuitem id="hr.menu_hr_main" parent="hr.menu_hr_root" name="Human Resources" sequence="49"/>
+
+        <menuitem id="hr_timesheet.menu_hr_working_hours" parent="hr_attendance.menu_hr_time_tracking"
+                  action="hr_timesheet.act_hr_timesheet_line_evry1_all_form" sequence="-1"/>
+
+        <record model="ir.ui.view" id="hr_timesheet_line_tree">
+            <field name="name">hr.analytic.timesheet.tree.inherited</field>
+            <field name="model">hr.analytic.timesheet</field>
+            <field name="inherit_id" ref="hr_timesheet.hr_timesheet_line_tree"/>
+            <field name="sequence" eval="14"/>
+            <field name="arch" type="xml">
+                <field name="user_id" position="replace">
+                    <field name="user_id"
+                           on_change="on_change_user_id(user_id)"
+                           options="{'no_open': True}"
+                           groups="base.group_hr_user"
+                           required="1"
+                           context="{'default_groups_ref': ['base.group_user']}"/>
+                </field>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="hr_timesheet_line_tree2">
+            <field name="name">hr.analytic.timesheet.tree2.inherited</field>
+            <field name="model">hr.analytic.timesheet</field>
+            <field name="inherit_id" ref="hr_timesheet_invoice.hr_timesheet_line_tree"/>
+            <field name="sequence" eval="14"/>
+            <field name="arch" type="xml">
+                <field name="to_invoice" position="replace">
+                    <field name="to_invoice" invisible="1"/>
+                </field>
+                <field name="account_id" position="replace">
+                    <field name="account_id"
+                           string="Project"
+                           domain="[('type','in',['normal','contract']),('state', '&lt;&gt;', 'close'),('use_timesheets','=',1)]"
+                           on_change="on_change_account_id(account_id, user_id)"
+                           options="{'no_open': True}"
+                           context="{'default_use_timesheets': 1}"/>
+                </field>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="hr_timesheet_line_form">
+            <field name="name">hr.analytic.timesheet.form.inherited</field>
+            <field name="model">hr.analytic.timesheet</field>
+            <field name="inherit_id" ref="hr_timesheet.hr_timesheet_line_form"/>
+            <field name="sequence" eval="15"/>
+            <field name="arch" type="xml">
+                <field name="user_id" position="replace">
+                    <field name="user_id"
+                           on_change="on_change_user_id(user_id)"
+                           required="1"
+                           options="{'no_open': True}"
+                           groups="base.group_hr_user"
+                           context="{'default_groups_ref': ['base.group_user']}"/>
+                </field>
+                <field name="account_id" position="replace">
+                    <field name="account_id"
+                           domain="[('type','=','normal'),('state', '&lt;&gt;', 'close'),('parent_id','!=',False)]"
+                           options="{'no_open': True}"
+                           select="1"/>
+                </field>
+                <field name="general_account_id" position="replace">
+                    <field name="general_account_id"
+                           string="Project"
+                           options="{'no_open': True}"
+                           groups="base.group_hr_user"
+                           widget="selection"/>
+                </field>
+                 <field name="journal_id" position="replace">
+                    <field name="journal_id"
+                           options="{'no_open': True}"
+                           groups="base.group_hr_user"
+                           widget="selection"/>
+                </field>
+                <field name="amount" position="replace">
+                    <field name="amount" groups="base.group_hr_user"/>
+                </field>
+                <field name="product_id" position="replace">
+                    <field name="product_id"
+                           options="{'no_open': True}"
+                           on_change="on_change_unit_amount(product_id, unit_amount, False, product_uom_id,journal_id)"
+                           required="1"
+                           domain="[('type','=','service')]"
+                           widget="selection"/>
+                </field>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="hr_timesheet_line_form2">
+            <field name="name">hr.analytic.timesheet.form.inherited</field>
+            <field name="model">hr.analytic.timesheet</field>
+            <field name="inherit_id" ref="hr_timesheet_invoice.hr_timesheet_line_form"/>
+            <field name="sequence" eval="14"/>
+            <field name="arch" type="xml">
+                <xpath expr="//group[@string='Invoicing']" position='replace'>
+                    <group string="Invoicing" invisible="1">
+                        <field name="to_invoice"/>
+                        <field name="invoice_id"/>
+                    </group>
+                </xpath>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="hr_timesheet_line_form3">
+            <field name="name">hr.analytic.timesheet.form2.inherited</field>
+            <field name="model">hr.analytic.timesheet</field>
+            <field name="inherit_id" ref="hr_timesheet_invoice.hr_timesheet_line_form2"/>
+            <field name="sequence" eval="14"/>
+            <field name="arch" type="xml">
+                <field name="account_id" position="replace">
+                    <field name="account_id"
+                           string="Project"
+                           on_change="on_change_account_id(account_id, user_id)"
+                           domain="[('type','in',['normal', 'contract']), ('state', '&lt;&gt;', 'close'),('use_timesheets','=',1)]"
+                           widget="selection"
+                           context="{'default_use_timesheets': 1}"/>
+                </field>
+            </field>
+        </record>
+
+    </data>
+
+</openerp>
+
